@@ -6,7 +6,7 @@ output: html_document
 
 ## Name
 
-Please enter your name here.
+Parul Gupta 
 
 ### Setup
 
@@ -14,7 +14,7 @@ Read in the data with `read_csv()` and store the data as an R object named `data
 
 
 ```{r}
-## Load the data and any necessary packages here.
+dataset <- read.csv('maacs.csv.gz')
 
 ```
 
@@ -31,7 +31,12 @@ NOTE: In order to write this function, you will need to translate the statement 
 NOTE: For this part, do not use any plots.
 
 ```{r}
-## Write your function here
+check_relationship <- function(dataset) {
+  # remove missing values just in case
+  valid_data <- dataset[!is.na(dataset$age) & !is.na(dataset$fev1), ]
+  corr_val <- cor(valid_data$age, valid_data$fev1)
+  return(corr_val > 0)
+}
 
 ```
 
@@ -43,12 +48,19 @@ Fit a linear regression model with FEV1 as the outcome and age as a predictor.
 How much does FEV1 change for a 1-year increase in the child's age? 
 
 ```{r}
-## Add your code here
+# Fit linear regression model
+model <- lm(fev1 ~ age, data = dataset)
 
+# View the summary to see coefficients
+summary(model)
+
+# Extract the coefficient for age (the slope)
+coef(model)["age"]
 ```
 
 
-Write your data analysis statement interpreting the regression model here:
+Write your data analysis statement interpreting the regression model here: For each additional year of age, FEV1 changes by 0.171 units indicating FEV1 levels rise over time.
+
 
 
 
@@ -59,18 +71,30 @@ Develop **three** supporting premises derived from the data that support the sta
 NOTE: At least one supporting premise should use a plot.
 
 ```{r}
-## Add your code here
+## Scatter Plot
+plot(fev1 ~ age, data = dataset, 
+     main = "FEV1 vs. Age",
+     xlab = "Age (years)",
+     ylab = "FEV1 (L)")
+
+abline(model, col = "red")
 
 ```
 
+```{r}
+
+# View p value
+summary(model)
+
+```
 
 Write the three supporting premise statements here:
 
-1. 
+1. The plot visually indicates a positive trend, where as age increases, the FEV1 levels are increasing. 
 
-2. 
+2. The p value is less than 2e-16, which is also less than 0.05, the typical benchmark for evaluating significance. This provides strong statistical evidence that the relationship between age and FEV1 is not due to random chance. 
 
-3. 
+3. The R-squared value is 0.6496. This means that 64.96% of the variability in FEV1 can be explained by age alone, demonstrating that age is a strong predictor of FEV1.
 
 
 ## Part 4
@@ -86,19 +110,53 @@ For statements involving plots, instead of returning `TRUE` or `FALSE`, you func
 
 ```{r}
 ## Function for supporting premise statement 1
+check_premise1 <- function(dataset) {
+  plot(fev1 ~ age, data = dataset,
+       main = "FEV1 vs. Age (Actual Data)",
+       xlab = "Age (years)",
+       ylab = "FEV1 (L)")
+  
+  set.seed(42) # for reproducibility
+  hypothetical_age <- 5:18
+  hypothetical_fev1 <- 1 + 0.2 * hypothetical_age + rnorm(length(hypothetical_age), mean = 0, sd = 0.2)
+  
+  plot(hypothetical_fev1 ~ hypothetical_age,
+       main = "FEV1 vs. Age (Hypothetical Positive Trend)",
+       xlab = "Age (years)",
+       ylab = "FEV1 (L)")
+}
+
+check_premise1(dataset)
 
 ```
 
 
 ```{r}
 ## Function for supporting premise statement 2
+check_premise2 <- function(dataset) {
+  model <- lm(fev1 ~ age, data = dataset)
+  
+  p_value <- summary(model)$coefficients["age", "Pr(>|t|)"]
+  
+  return(p_value < 0.05)
+}
+
+check_premise2(dataset)
 
 ```
 
 
 ```{r}
 ## Function for supporting premise statement 3
+check_premise3 <- function(dataset) {
+  model <- lm(fev1 ~ age, data = dataset)
+  
+  r_squared <- summary(model)$r.squared
+  
+  return(r_squared > 0.5)
+}
 
+check_premise3(dataset)
 ```
 
 Execute each of your function and show that the produce the expected output.
@@ -110,8 +168,10 @@ Execute each of your function and show that the produce the expected output.
 
 Describe one alternative to the primary statement "FEV1 values in children are higher in older children relative to younger children". 
 
+There is no linear relationship between FEV1 and age; this means as a child gets older, their FEV1 values do not systematically increase or decrease, but instead remain constant or change in a non-linear, unpredictable way.
+  
 Create a fault tree for the alternative outcome describing how the alternative outcome could be realized in the data even if the primary statement were true.
-
+  
 Your fault tree should be created as a separate image and does not need to be created in R. Upload the image of the fault tree to Canvas.
 
 
