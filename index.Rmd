@@ -168,7 +168,7 @@ Execute each of your function and show that the produce the expected output.
 
 Describe one alternative to the primary statement "FEV1 values in children are higher in older children relative to younger children". 
 
-There is no linear relationship between FEV1 and age; this means as a child gets older, their FEV1 values do not systematically increase or decrease, but instead remain constant or change in a non-linear, unpredictable way.
+There is no linear relationship between FEV1 and age; average FEV1 values are the same in older and younger children. 
   
 Create a fault tree for the alternative outcome describing how the alternative outcome could be realized in the data even if the primary statement were true.
   
